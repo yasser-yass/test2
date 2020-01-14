@@ -1,0 +1,57 @@
+            var endWidth = 100;  ///more pixles
+            var endHeight = 150;
+            Color p;
+
+            var scaleFactor = 3; //perhaps get this value from a const, or an on screen slider <<<<<<<< zooom
+
+            var startWidth = endWidth / scaleFactor;
+            var startHeight = endHeight / scaleFactor;
+
+            bmp = new Bitmap(startWidth, startHeight);
+
+            g = this.CreateGraphics();
+            g = Graphics.FromImage(bmp);
+
+
+            var xPos = Math.Max(0, MousePosition.X - (startWidth / 2)); // divide by two in order to center
+            var yPos = Math.Max(0, MousePosition.Y - (startHeight / 2));
+
+            g.CopyFromScreen(xPos, yPos, 0, 0, new Size(endWidth, endWidth));                ////magnifier
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            for (int y = 0; y < bmp.Height; y++)                   ////black and white image
+            {
+                for (int x = 0; x < bmp.Width; x++)
+                {
+                    p = bmp.GetPixel(x, y);
+
+                    int a = p.A;
+                    int r = p.R;
+                    int g = p.G;
+                    int b = p.B;
+
+
+                    int avg = (r + g + b) / 3;
+
+                    bmp.SetPixel(x, y, Color.FromArgb(a, avg, avg, avg));
+
+                }
+
+            }
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            Image img = bmp;                                                           ////cut image
+            int widthThird = (int)((double)img.Width / 1.5 + 0.5);           
+            int heightThird = (int)((double)img.Height / 9.5 + 0.5);
+            Bitmap[,] bmps = new Bitmap[9,1];
+
+            for (int i = 0; i < 9; i++)
+                for (int j = 0; j < 1; j++)
+                {
+                    bmps[i, j] = new Bitmap(widthThird, heightThird);
+                    Graphics g = Graphics.FromImage(bmps[i, j]);
+                    g.DrawImage(img, new Rectangle(0, 0, widthThird, heightThird), new Rectangle(j * widthThird, i * heightThird, widthThird, heightThird), GraphicsUnit.Pixel);
+                    g.Dispose();
+
+
+                }
